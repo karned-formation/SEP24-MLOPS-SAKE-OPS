@@ -3,4 +3,4 @@ name: sake-etl
 description: Extract Transform Load
 type: application
 version: 1.0.0
-appVersion: "WIP"
+appVersion: "test"
