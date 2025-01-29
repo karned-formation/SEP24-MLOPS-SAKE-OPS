@@ -1,0 +1,3 @@
+NameSpace: sake
+AppName: train
+DockerImage: killiankopp/sake-train:test
