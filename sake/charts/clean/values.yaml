@@ -1,0 +1,3 @@
+NameSpace: sake
+AppName: clean
+DockerImage: killiankopp/sake-clean:test
