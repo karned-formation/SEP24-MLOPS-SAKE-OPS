@@ -1,0 +1,3 @@
+NameSpace: sake
+AppName: orchestrator
+DockerImage: killiankopp/sake-orchestrator:test
