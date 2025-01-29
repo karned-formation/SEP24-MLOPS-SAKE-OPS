@@ -1,0 +1,5 @@
+NameSpace: sake
+AppName: frontend
+DockerImage: killiankopp/sake-frontend:test
+
+HostName: sake.karned.bzh
