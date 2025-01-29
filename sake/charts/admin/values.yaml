@@ -1,0 +1,3 @@
+NameSpace: sake
+AppName: admin
+DockerImage: killiankopp/sake-admin:test
