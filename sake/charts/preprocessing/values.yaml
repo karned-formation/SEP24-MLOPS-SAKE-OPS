@@ -1,0 +1,3 @@
+NameSpace: sake
+AppName: preprocessing
+DockerImage: killiankopp/sake-preprocessing:test
