@@ -1,0 +1,3 @@
+NameSpace: sake
+AppName: eval
+DockerImage: killiankopp/sake-eval:test
