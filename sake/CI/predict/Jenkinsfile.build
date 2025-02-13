@@ -1,0 +1,85 @@
+pipeline {
+    agent {
+        kubernetes {
+            yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: docker
+    image: docker:24.0.2
+    command:
+    - cat
+    tty: true
+    volumeMounts:
+    - mountPath: /var/run/docker.sock
+      name: docker-sock
+  - name: python
+    image: python:3.11-slim
+    command:
+    - cat
+    tty: true
+  volumes:
+  - name: docker-sock
+    hostPath:
+      path: /var/run/docker.sock
+"""
+        }
+    }
+    parameters {
+        string(name: 'GITHUB_BRANCH', defaultValue: 'main', description: 'Git branch to checkout')
+    }
+    environment {
+        DOCKER_IMAGE = 'killiankopp/sake-predict'
+        DOCKER_TAG = 'test'
+        DOCKER_BUILDKIT = '1'
+    }
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git branch: "${params.GITHUB_BRANCH}", url: 'https://github.com/karned-formation/SEP24-MLOPS-SAKE.git'
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'S3_SAKE',
+                    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                ]]) {
+                    container('docker') {
+                        sh """
+export DOCKER_BUILDKIT=1
+mkdir -p /home/jenkins/.aws
+cat > /home/jenkins/.aws/credentials <<EOF
+AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+EOF
+
+cd docker/predict
+
+docker build --secret id=aws_secrets,src=/home/jenkins/.aws/credentials \
+    -t ${DOCKER_IMAGE}:${DOCKER_TAG} \
+    .
+
+rm -f /home/jenkins/.aws/credentials
+"""
+                    }
+                }
+            }
+        }
+        stage('Push to Docker Hub') {
+            steps {
+                container('docker') {
+                    withCredentials([usernamePassword(credentialsId: 'DOCKERHUB_CREDENTIALS', usernameVariable: 'DOCKERHUB_USR', passwordVariable: 'DOCKERHUB_PSW')]) {
+                        sh """
+                        echo $DOCKERHUB_PSW | docker login -u $DOCKERHUB_USR --password-stdin
+                        docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
+                        """
+                    }
+                }
+            }
+        }
+    }
+}
