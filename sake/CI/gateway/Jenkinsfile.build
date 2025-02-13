@@ -32,12 +32,17 @@ spec:
     }
     environment {
         DOCKER_IMAGE = 'killiankopp/sake-gateway'
-        DOCKER_TAG = 'test'
     }
     stages {
-        stage('Clone Repository') {
+        stage('Retrieve Version') {
             steps {
-                git branch: "${params.GITHUB_BRANCH}", url: 'https://github.com/karned-formation/SEP24-MLOPS-SAKE.git'
+                script {
+                    env.DOCKER_TAG = sh(
+                        script: "curl -s https://raw.githubusercontent.com/karned-formation/SEP24-MLOPS-SAKE-OPS/main/sake/CI/gateway/version",
+                        returnStdout: true
+                    ).trim()
+                }
+                echo "Version récupérée : ${env.DOCKER_TAG}"
             }
         }
         stage('Build Docker Image') {
