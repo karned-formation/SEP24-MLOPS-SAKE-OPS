@@ -33,21 +33,25 @@ spec:
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: "${params.GITHUB_BRANCH}", url: 'https://github.com/karned-formation/SEP24-MLOPS-SAKE.git'
+                container('python') {
+                    git branch: "${params.GITHUB_BRANCH}", url: 'https://github.com/karned-formation/SEP24-MLOPS-SAKE.git'
+                }
             }
         }
         stage('Run Tests') {
             steps {
-                script {
-                    sh 'python -m venv venv'
-                    sh './venv/bin/activate'
-                    sh 'pip install -r requirements.txt'
-                    try {
-                        sh './venv/bin/pytest --cov=src tests/'
-                    } catch (Exception e) {
-                        currentBuild.result = 'FAILURE'
-                        echo "Erreur lors de l'exécution des tests : ${e}"
-                        throw e
+                container('python') {
+                    script {
+                        sh 'python -m venv venv'
+                        sh './venv/bin/activate'
+                        sh 'pip install -r requirements.txt'
+                        try {
+                            sh './venv/bin/pytest --cov=src tests/'
+                        } catch (Exception e) {
+                            currentBuild.result = 'FAILURE'
+                            echo "Erreur lors de l'exécution des tests : ${e}"
+                            throw e
+                        }
                     }
                 }
             }
