@@ -1,5 +1,5 @@
 NameSpace: sake
 AppName: gateway
-DockerImage: killiankopp/sake-gateway:test
+DockerImage: killiankopp/sake-gateway:2.0
 
 HostName: api.sake.karned.bzh

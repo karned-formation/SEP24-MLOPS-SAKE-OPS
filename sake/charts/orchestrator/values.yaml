@@ -1,3 +1,3 @@
 NameSpace: sake
 AppName: predict-orchestrator
-DockerImage: killiankopp/sake-orchestrator:test
+DockerImage: killiankopp/sake-orchestrator:2.0
