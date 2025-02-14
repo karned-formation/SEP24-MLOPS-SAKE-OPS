@@ -45,10 +45,9 @@ spec:
                 container('python') {
                     script {
                         sh 'python -m venv venv'
-                        sh './venv/bin/activate'
-                        sh 'pip install -r requirements.txt'
+                        sh './venv/bin/python -m pip install -r requirements.txt'
                         try {
-                            sh './venv/bin/pytest --cov=src tests/'
+                            sh './venv/bin/python -m pytest -vvv docker/orchestrator/tests/ '
                         } catch (Exception e) {
                             currentBuild.result = 'FAILURE'
                             echo "Erreur lors de l'exécution des tests : ${e}"
