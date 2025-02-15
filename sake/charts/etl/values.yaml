@@ -1,3 +1,3 @@
 NameSpace: sake
 AppName: etl
-DockerImage: killiankopp/sake-etl:test
+DockerImage: killiankopp/sake-etl:2.0

@@ -16,6 +16,5 @@ spec:
       containers:
       - name: {{ .Values.AppName }}
         image: {{ .Values.DockerImage }}
-        imagePullPolicy: {{ .Values.image.pullPolicy }} 
         ports:
         - containerPort: 80

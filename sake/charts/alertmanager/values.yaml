@@ -1,0 +1,5 @@
+NameSpace: sake
+AppName: alertmanager
+DockerImage: belwen/sake-alertmanager:1.1
+image:
+  pullPolicy: Always

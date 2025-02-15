@@ -1,0 +1,5 @@
+NameSpace: sake
+AppName: prometheus
+DockerImage: belwen/sake-prometheus:1.2
+image:
+  pullPolicy: Always
