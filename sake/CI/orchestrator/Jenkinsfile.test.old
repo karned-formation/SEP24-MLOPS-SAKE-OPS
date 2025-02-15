@@ -1,0 +1,60 @@
+pipeline {
+    agent {
+        kubernetes {
+            yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: docker
+    image: docker:24.0.2
+    command:
+    - cat
+    tty: true
+    volumeMounts:
+    - mountPath: /var/run/docker.sock
+      name: docker-sock
+  - name: python
+    image: python:3.11
+    command:
+    - cat
+    tty: true
+    securityContext:
+      runAsUser: 0
+  volumes:
+  - name: docker-sock
+    hostPath:
+      path: /var/run/docker.sock
+"""
+        }
+    }
+    parameters {
+        string(name: 'GITHUB_BRANCH', defaultValue: 'main', description: 'Git branch to checkout')
+    }
+    stages {
+        stage('Clone Repository') {
+            steps {
+                container('python') {
+                    git branch: "${params.GITHUB_BRANCH}", url: 'https://github.com/karned-formation/SEP24-MLOPS-SAKE.git'
+                }
+            }
+        }
+        stage('Run Tests') {
+            steps {
+                container('python') {
+                    script {
+                        sh 'python -m venv venv'
+                        sh './venv/bin/python -m pip install -r requirements.txt'
+                        try {
+                            sh './venv/bin/python -m pytest -vvv docker/orchestrator/tests/ '
+                        } catch (Exception e) {
+                            currentBuild.result = 'FAILURE'
+                            echo "Erreur lors de l'exécution des tests : ${e}"
+                            throw e
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
