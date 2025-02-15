@@ -45,11 +45,13 @@ spec:
                 echo "Version récupérée : ${env.DOCKER_TAG}"
             }
         }
+
         stage('Clone Repository') {
             steps {
                 git branch: "${params.GITHUB_BRANCH}", url: 'https://github.com/karned-formation/SEP24-MLOPS-SAKE.git'
             }
         }
+
         stage('Build Docker Image') {
             steps {
                 container('docker') {
@@ -60,6 +62,7 @@ spec:
                 }
             }
         }
+
         stage('Push to Docker Hub') {
             steps {
                 container('docker') {

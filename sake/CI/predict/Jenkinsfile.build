@@ -35,11 +35,24 @@ spec:
         DOCKER_BUILDKIT = '1'
     }
     stages {
+        stage('Retrieve Version') {
+            steps {
+                script {
+                    env.DOCKER_TAG = sh(
+                        script: "curl -s https://raw.githubusercontent.com/karned-formation/SEP24-MLOPS-SAKE-OPS/main/sake/CI/predict/version",
+                        returnStdout: true
+                    ).trim()
+                }
+                echo "Version récupérée : ${env.DOCKER_TAG}"
+            }
+        }
+
         stage('Clone Repository') {
             steps {
                 git branch: "${params.GITHUB_BRANCH}", url: 'https://github.com/karned-formation/SEP24-MLOPS-SAKE.git'
             }
         }
+
         stage('Build Docker Image') {
             steps {
                 withCredentials([[
@@ -69,6 +82,7 @@ rm -f /home/jenkins/.aws/credentials
                 }
             }
         }
+
         stage('Push to Docker Hub') {
             steps {
                 container('docker') {
