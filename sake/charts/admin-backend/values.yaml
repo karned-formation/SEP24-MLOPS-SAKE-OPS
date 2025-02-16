@@ -1,6 +1,6 @@
 NameSpace: sake
 AppName: admin-backend
-DockerImage: belwen/sake-admin-backend:test
+DockerImage: belwen/sake-admin-backend:2.0
 
 image:
   pullPolicy: Always
