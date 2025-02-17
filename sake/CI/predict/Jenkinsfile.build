@@ -31,7 +31,6 @@ spec:
     }
     environment {
         DOCKER_IMAGE = 'killiankopp/sake-predict'
-        DOCKER_TAG = 'test'
         DOCKER_BUILDKIT = '1'
     }
     stages {

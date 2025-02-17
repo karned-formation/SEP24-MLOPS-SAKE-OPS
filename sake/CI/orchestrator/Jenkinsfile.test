@@ -72,10 +72,11 @@ spec:
                 container('python') {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                         sh '''
+                        cd docker/${DOCKER_SERVICE_NAME}
                         python -m venv venv
                         . venv/bin/activate
-                        pip install --no-cache-dir -r docker/${DOCKER_SERVICE_NAME}/requirements.txt
-                        pytest --junitxml=report.xml docker/${DOCKER_SERVICE_NAME}/tests/
+                        pip install --no-cache-dir -r requirements.txt
+                        pytest --junitxml=report.xml
                         '''
                     }
                 }
