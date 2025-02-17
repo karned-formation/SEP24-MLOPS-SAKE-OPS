@@ -1,0 +1,3 @@
+NameSpace: sake
+AppName: file
+DockerImage: killiankopp/sake-file:2.0

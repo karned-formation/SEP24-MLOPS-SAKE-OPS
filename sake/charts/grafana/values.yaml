@@ -1,0 +1,5 @@
+NameSpace: sake
+AppName: grafana
+DockerImage: belwen/sake-grafana:1.1
+image:
+  pullPolicy: Always

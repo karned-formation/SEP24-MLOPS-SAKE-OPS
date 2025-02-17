@@ -1,3 +1,5 @@
 NameSpace: sake
 AppName: train
-DockerImage: killiankopp/sake-train:test
+DockerImage: belwen/sake-train:2.0
+image:
+  pullPolicy: Always

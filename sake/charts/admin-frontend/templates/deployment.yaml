@@ -19,3 +19,6 @@ spec:
         imagePullPolicy: {{ .Values.image.pullPolicy }} 
         ports:
         - containerPort: 80
+        env:
+        - name: ADMIN_BACKEND_URL
+          value: "{{ .Values.env.ADMIN_BACKEND_URL }}"

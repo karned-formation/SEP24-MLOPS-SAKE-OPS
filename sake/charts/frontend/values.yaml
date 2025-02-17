@@ -5,3 +5,5 @@ DockerImage: killiankopp/sake-frontend:2.0
 HostName: sake.karned.bzh
 
 URL_BACKEND: https://api.sake.karned.bzh
+image:
+  pullPolicy: Always

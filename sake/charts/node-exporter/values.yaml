@@ -1,0 +1,3 @@
+NameSpace: sake
+AppName: node-exporter
+DockerImage: prom/node-exporter:latest
