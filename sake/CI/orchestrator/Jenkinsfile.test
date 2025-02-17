@@ -27,7 +27,6 @@ spec:
         }
     }
     parameters {
-        string(name: 'GITHUB_BRANCH', defaultValue: 'main', description: 'Git branch to checkout')
         string(name: 'DOCKER_SERVICE_NAME', defaultValue: 'orchestrator', description: 'Docker service name')
     }
 
@@ -47,7 +46,7 @@ spec:
                 script {
                     echo "Detecting the latest updated branch..."
                     def latestBranch = sh(
-                        script: "git rev-parse --abbrev-ref HEAD",
+                        script: "git for-each-ref --sort=-committerdate --format='%(refname:short)' refs/remotes/origin | grep -v HEAD | head -n 1 | sed 's|origin/||'",
                         returnStdout: true
                     ).trim()
                     env.BRANCH_NAME = latestBranch
