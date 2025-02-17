@@ -28,6 +28,7 @@ spec:
     }
     parameters {
         string(name: 'GITHUB_BRANCH', defaultValue: 'main', description: 'Git branch to checkout')
+        string(name: 'DOCKER_SERVICE_NAME', defaultValue: 'orchestrator', description: 'Docker service name')
     }
 
     stages {
@@ -35,9 +36,7 @@ spec:
             steps {
                 script {
                     echo "Fetching all branches"
-
-                    git url: 'https://github.com/karned-formation/SEP24-MLOPS-SAKE.git', branch: 'main'
-
+                    git url: 'https://github.com/karned-formation/SEP24-MLOPS-SAKE.git', branch: "${params.GITHUB_BRANCH}"
                     sh "git fetch --all"
                 }
             }
@@ -47,12 +46,10 @@ spec:
             steps {
                 script {
                     echo "Detecting the latest updated branch..."
-
                     def latestBranch = sh(
-                        script: "git for-each-ref --sort=-committerdate --format='%(refname:short)' refs/remotes/origin | grep -v HEAD | head -n 1 | sed 's|origin/||'",
+                        script: "git rev-parse --abbrev-ref HEAD",
                         returnStdout: true
                     ).trim()
-
                     env.BRANCH_NAME = latestBranch
                     echo "Latest branch detected: ${env.BRANCH_NAME}"
                 }
@@ -63,7 +60,6 @@ spec:
             steps {
                 script {
                     echo "Checking out latest branch: ${env.BRANCH_NAME}"
-
                     sh """
                         git checkout ${env.BRANCH_NAME}
                         git pull origin ${env.BRANCH_NAME}
@@ -72,17 +68,16 @@ spec:
             }
         }
 
-
         stage('Run Tests') {
             steps {
                 container('python') {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh '''
-python -m venv venv
-. venv/bin/activate
-pip install -r requirements.txt
-pytest --junitxml=report.xml docker/orchestrator/tests/
-                    '''
+                        sh '''
+                        python -m venv venv
+                        . venv/bin/activate
+                        pip install --no-cache-dir -r requirements.txt
+                        pytest --junitxml=report.xml docker/${DOCKER_SERVICE_NAME}/tests/
+                        '''
                     }
                 }
             }
@@ -91,25 +86,33 @@ pytest --junitxml=report.xml docker/orchestrator/tests/
         stage('Parse Test Results') {
             steps {
                 container('python') {
-                    sh '''
-. venv/bin/activate
-python -c "
+                    script {
+                        def reportExists = sh(script: "[ -f report.xml ] && echo 'exists' || echo 'missing'", returnStdout: true).trim()
+                        if (reportExists == 'exists') {
+                            sh '''
+                            . venv/bin/activate
+                            python -c "
 import xml.etree.ElementTree as ET
 
 tree = ET.parse('report.xml')
 root = tree.getroot()
 
 testsuite = root.find('./testsuite')
-total = int(testsuite.attrib['tests'])
-failures = int(testsuite.attrib['failures'])
-errors = int(testsuite.attrib['errors'])
+total = int(testsuite.attrib.get('tests', 0))
+failures = int(testsuite.attrib.get('failures', 0))
+errors = int(testsuite.attrib.get('errors', 0))
 
 print(f'Total tests: {total}, Failures: {failures}, Errors: {errors}')
 
 with open('test_results.txt', 'w') as f:
     f.write(f'{total}:{failures}:{errors}')
 "
-                    '''
+                            '''
+                        } else {
+                            echo "No test report found, skipping test results parsing."
+                            sh "echo '0:0:0' > test_results.txt"
+                        }
+                    }
                 }
             }
         }
@@ -119,23 +122,22 @@ with open('test_results.txt', 'w') as f:
                 container('python') {
                     withCredentials([string(credentialsId: 'SLACK_WEBHOOK_URL', variable: 'SLACK_WEBHOOK_URL')]) {
                         script {
-                            // Lire les résultats des tests
                             def testResults = readFile('test_results.txt').trim()
                             def (total, failures, errors) = testResults.tokenize(':')
-
-                            // Définir les variables d'environnement
                             env.TOTAL_TESTS = total
                             env.FAILURES = failures
                             env.ERRORS = errors
 
-                            // Exécuter la commande pour envoyer un message Slack
                             sh '''
+                            if ! command -v curl &> /dev/null; then
                                 apt-get update && apt-get install -y curl
-                                curl -X POST -H 'Content-type: application/json' --data '{
-                                    "text": "SAKE Docker orchestrator -  Units Tests: ''' + env.TOTAL_TESTS + ''' Failures: ''' + env.FAILURES + ''' Errors: ''' + env.ERRORS + '''",
-                                    "username": "Jenkins Bot",
-                                    "icon_emoji": ":rocket:"
-                                }' ${SLACK_WEBHOOK_URL}
+                            fi
+
+                            curl -X POST -H 'Content-type: application/json' --data '{
+                                "text": "SAKE Docker ${DOCKER_SERVICE_NAME} - Unit Tests: ''' + env.TOTAL_TESTS + ''' Failures: ''' + env.FAILURES + ''' Errors: ''' + env.ERRORS + '''",
+                                "username": "Jenkins Bot",
+                                "icon_emoji": ":rocket:"
+                            }' ${SLACK_WEBHOOK_URL}
                             '''
                         }
                     }
