@@ -27,6 +27,7 @@ spec:
         }
     }
     parameters {
+        string(name: 'GITHUB_BRANCH', defaultValue: 'main', description: 'Git branch to checkout')
         string(name: 'DOCKER_SERVICE_NAME', defaultValue: 'orchestrator', description: 'Docker service name')
     }
 
@@ -34,9 +35,15 @@ spec:
         stage('Clone Repository') {
             steps {
                 script {
-                    echo "Fetching all branches"
-                    git url: 'https://github.com/karned-formation/SEP24-MLOPS-SAKE.git', branch: "${params.GITHUB_BRANCH}"
-                    sh "git fetch --all"
+                    echo "Fetching all branches from SEP24-MLOPS-SAKE.git"
+
+                    git url: 'https://github.com/karned-formation/SEP24-MLOPS-SAKE.git', branch: params.GITHUB_BRANCH
+
+                    sh """
+                        echo "Listing cloned files:"
+                        ls -la
+                        git fetch --all
+                    """
                 }
             }
         }
@@ -72,10 +79,11 @@ spec:
                 container('python') {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                         sh '''
+                        cd docker/${DOCKER_SERVICE_NAME}
                         python -m venv venv
                         . venv/bin/activate
                         pip install --no-cache-dir -r requirements.txt
-                        pytest --junitxml=report.xml docker/${DOCKER_SERVICE_NAME}/tests/
+                        pytest --junitxml=report.xml
                         '''
                     }
                 }
