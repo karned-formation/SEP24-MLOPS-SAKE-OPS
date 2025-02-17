@@ -128,17 +128,17 @@ with open('test_results.txt', 'w') as f:
                             env.FAILURES = failures
                             env.ERRORS = errors
 
-                            sh '''
+                            sh """
                             if ! command -v curl &> /dev/null; then
                                 apt-get update && apt-get install -y curl
                             fi
 
                             curl -X POST -H 'Content-type: application/json' --data '{
-                                "text": "SAKE Docker ${DOCKER_SERVICE_NAME} - Unit Tests: ''' + env.TOTAL_TESTS + ''' Failures: ''' + env.FAILURES + ''' Errors: ''' + env.ERRORS + '''",
+                                "text": "SAKE Docker ${params.DOCKER_SERVICE_NAME} - Unit Tests: ${env.TOTAL_TESTS} Failures: ${env.FAILURES} Errors: ${env.ERRORS}",
                                 "username": "Jenkins Bot",
                                 "icon_emoji": ":rocket:"
-                            }' ${SLACK_WEBHOOK_URL}
-                            '''
+                            }' \${SLACK_WEBHOOK_URL}
+                            """
                         }
                     }
                 }
