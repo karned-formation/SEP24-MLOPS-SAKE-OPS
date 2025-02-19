@@ -71,7 +71,7 @@ EOF
 
 cd docker/predict
 
-docker build --secret id=aws_secrets,src=/home/jenkins/.aws/credentials \
+docker build --no-cache --secret id=aws_secrets,src=/home/jenkins/.aws/credentials \
     -t ${DOCKER_IMAGE}:${DOCKER_TAG} \
     .
 
