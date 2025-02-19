@@ -18,3 +18,8 @@ spec:
         image: {{ .Values.DockerImage }}
         ports:
         - containerPort: 80
+        env:
+        - name: ENDPOINT_URL_OCR
+          value: {{ .Values.ENDPOINT_URL_OCR }}
+        - name: ENDPOINT_URL_CLEAN
+          value: {{ .Values.ENDPOINT_URL_CLEAN }}
