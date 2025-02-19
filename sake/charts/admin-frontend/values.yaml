@@ -1,7 +1,8 @@
 NameSpace: sake
 AppName: admin-frontend
-DockerImage: belwen/sake-admin-frontend:1.1
+DockerImage: belwen/sake-admin-frontend:2.0
 image:
   pullPolicy: Always
 env:
   ADMIN_BACKEND_URL: "http://admin-backend-service"
+  
