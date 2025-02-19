@@ -1,0 +1,155 @@
+pipeline {
+    agent {
+        kubernetes {
+            yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: docker
+    image: docker:24.0.2
+    command:
+    - cat
+    tty: true
+    volumeMounts:
+    - mountPath: /var/run/docker.sock
+      name: docker-sock
+  - name: python
+    image: python:3.11-slim
+    command:
+    - cat
+    tty: true
+  volumes:
+  - name: docker-sock
+    hostPath:
+      path: /var/run/docker.sock
+"""
+        }
+    }
+    parameters {
+        string(name: 'GITHUB_BRANCH', defaultValue: 'main', description: 'Git branch to checkout')
+        string(name: 'DOCKER_SERVICE_NAME', defaultValue: 'clean_text', description: 'Docker service name')
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                script {
+                    echo "Fetching all branches from SEP24-MLOPS-SAKE.git"
+
+                    git url: 'https://github.com/karned-formation/SEP24-MLOPS-SAKE.git', branch: params.GITHUB_BRANCH
+
+                    sh """
+                        echo "Listing cloned files:"
+                        ls -la
+                        git fetch --all
+                    """
+                }
+            }
+        }
+
+        stage('Detect Latest Branch') {
+            steps {
+                script {
+                    echo "Detecting the latest updated branch..."
+                    def latestBranch = sh(
+                        script: "git for-each-ref --sort=-committerdate --format='%(refname:short)' refs/remotes/origin | grep -v HEAD | head -n 1 | sed 's|origin/||'",
+                        returnStdout: true
+                    ).trim()
+                    env.BRANCH_NAME = latestBranch
+                    echo "Latest branch detected: ${env.BRANCH_NAME}"
+                }
+            }
+        }
+
+        stage('Checkout Latest Branch') {
+            steps {
+                script {
+                    echo "Checking out latest branch: ${env.BRANCH_NAME}"
+                    sh """
+                        git checkout ${env.BRANCH_NAME}
+                        git pull origin ${env.BRANCH_NAME}
+                    """
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                container('python') {
+                    catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                        sh '''
+                        cd docker/${DOCKER_SERVICE_NAME}
+                        python -m venv venv
+                        . venv/bin/activate
+                        pip install --no-cache-dir -r requirements.txt
+                        pytest --junitxml=report.xml
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Parse Test Results') {
+            steps {
+                container('python') {
+                    script {
+                        def reportExists = sh(script: "[ -f report.xml ] && echo 'exists' || echo 'missing'", returnStdout: true).trim()
+                        if (reportExists == 'exists') {
+                            sh '''
+                            . venv/bin/activate
+                            python -c "
+import xml.etree.ElementTree as ET
+
+tree = ET.parse('report.xml')
+root = tree.getroot()
+
+testsuite = root.find('./testsuite')
+total = int(testsuite.attrib.get('tests', 0))
+failures = int(testsuite.attrib.get('failures', 0))
+errors = int(testsuite.attrib.get('errors', 0))
+
+print(f'Total tests: {total}, Failures: {failures}, Errors: {errors}')
+
+with open('test_results.txt', 'w') as f:
+    f.write(f'{total}:{failures}:{errors}')
+"
+                            '''
+                        } else {
+                            echo "No test report found, skipping test results parsing."
+                            sh "echo '0:0:0' > test_results.txt"
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Send Slack Message') {
+            steps {
+                container('python') {
+                    withCredentials([string(credentialsId: 'SLACK_WEBHOOK_URL', variable: 'SLACK_WEBHOOK_URL')]) {
+                        script {
+                            def testResults = readFile('test_results.txt').trim()
+                            def (total, failures, errors) = testResults.tokenize(':')
+                            env.TOTAL_TESTS = total
+                            env.FAILURES = failures
+                            env.ERRORS = errors
+
+                            sh """
+                            if ! command -v curl &> /dev/null; then
+                                apt-get update && apt-get install -y curl
+                            fi
+
+                            curl -X POST -H 'Content-type: application/json' --data '{
+                                "text": "SAKE Docker ${params.DOCKER_SERVICE_NAME} - Unit Tests: ${env.TOTAL_TESTS} Failures: ${env.FAILURES} Errors: ${env.ERRORS}",
+                                "username": "Jenkins Bot",
+                                "icon_emoji": ":rocket:"
+                            }' \${SLACK_WEBHOOK_URL}
+                            """
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
