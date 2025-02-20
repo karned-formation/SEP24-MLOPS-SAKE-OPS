@@ -13,12 +13,6 @@ spec:
       labels:
         app: {{ .Values.AppName }}
     spec:
-      securityContext:
-        sysctls:
-          - name: fs.inotify.max_user_instances
-            value: "1024"
-          - name: fs.inotify.max_user_watches
-            value: "524288"
       containers:
       - name: {{ .Values.AppName }}
         image: {{ .Values.DockerImage }}
