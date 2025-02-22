@@ -5,7 +5,7 @@ metadata:
   namespace: {{ .Values.NameSpace }}
 spec:
   ports:
-  - port: 80
+  - port: 9100
     targetPort: 9100
   selector:
     app: {{ .Values.AppName }}
