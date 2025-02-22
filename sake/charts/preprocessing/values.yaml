@@ -1,5 +1,3 @@
 NameSpace: sake
 AppName: preprocessing
 DockerImage: belwen/sake-preprocessing:2.0
-image:
-  pullPolicy: Always

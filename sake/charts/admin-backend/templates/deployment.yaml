@@ -16,45 +16,89 @@ spec:
       containers:
       - name: {{ .Values.AppName }}
         image: {{ .Values.DockerImage }}
-        imagePullPolicy: {{ .Values.image.pullPolicy }} 
         ports:
         - containerPort: 80
         env:
         - name: ENDPOINT_URL_EXTRACT
-          value: "{{ .Values.env.ENDPOINT_URL_EXTRACT }}"
+          value: {{ .Values.env.ENDPOINT_URL_EXTRACT }}
         - name: ENDPOINT_URL_TRANSFORM
-          value: "{{ .Values.env.ENDPOINT_URL_TRANSFORM }}"
+          value: {{ .Values.env.ENDPOINT_URL_TRANSFORM }}
         - name: DATA_INGESTION_OCR_ENDPOINT
-          value: "{{ .Values.env.DATA_INGESTION_OCR_ENDPOINT }}"
+          value: {{ .Values.env.DATA_INGESTION_OCR_ENDPOINT }}
         - name: DATA_CLEANING_CLEAN_ENDPOINT
-          value: "{{ .Values.env.DATA_CLEANING_CLEAN_ENDPOINT }}"
+          value: {{ .Values.env.DATA_CLEANING_CLEAN_ENDPOINT }}
         - name: DATA_PREPROCESSING_ENDPOINT_PREPROCESSING
-          value: "{{ .Values.env.DATA_PREPROCESSING_ENDPOINT_PREPROCESSING }}"
+          value: {{ .Values.env.DATA_PREPROCESSING_ENDPOINT_PREPROCESSING }}
         - name: MODEL_TRAIN_ENDPOINT_TRAIN
-          value: "{{ .Values.env.MODEL_TRAIN_ENDPOINT_TRAIN }}"
+          value: {{ .Values.env.MODEL_TRAIN_ENDPOINT_TRAIN }}
         - name: MODEL_EVAL_ENDPOINT_EVAL
-          value: "{{ .Values.env.MODEL_EVAL_ENDPOINT_EVAL }}"
+          value: {{ .Values.env.MODEL_EVAL_ENDPOINT_EVAL }}
         - name: DATA_STRUCTURE_RAW_RAW_DATASET_DIR
-          value: "{{ .Values.env.DATA_STRUCTURE_RAW_RAW_DATASET_DIR }}"
+          value: {{ .Values.env.DATA_STRUCTURE_RAW_RAW_DATASET_DIR }}
         - name: DATA_INGESTION_OCR_TEXT_DIR
-          value: "{{ .Values.env.DATA_INGESTION_OCR_TEXT_DIR }}"
+          value: {{ .Values.env.DATA_INGESTION_OCR_TEXT_DIR }}
         - name: DATA_CLEANING_CLEANED_DATASETS_DIR
-          value: "{{ .Values.env.DATA_CLEANING_CLEANED_DATASETS_DIR }}"
+          value: {{ .Values.env.DATA_CLEANING_CLEANED_DATASETS_DIR }}
         - name: DATA_PREPROCESSING_TRAIN_DATA_DIR
-          value: "{{ .Values.env.DATA_PREPROCESSING_TRAIN_DATA_DIR }}"
+          value: {{ .Values.env.DATA_PREPROCESSING_TRAIN_DATA_DIR }}
         - name: DATA_PREPROCESSING_TEST_DATA_DIR
-          value: "{{ .Values.env.DATA_PREPROCESSING_TEST_DATA_DIR }}"
+          value: {{ .Values.env.DATA_PREPROCESSING_TEST_DATA_DIR }}
         - name: DATA_PREPROCESSING_X_TRAIN_PATH
-          value: "{{ .Values.env.DATA_PREPROCESSING_X_TRAIN_PATH }}"
+          value: {{ .Values.env.DATA_PREPROCESSING_X_TRAIN_PATH }}
         - name: DATA_PREPROCESSING_Y_TRAIN_PATH
-          value: "{{ .Values.env.DATA_PREPROCESSING_Y_TRAIN_PATH }}"
+          value: {{ .Values.env.DATA_PREPROCESSING_Y_TRAIN_PATH }}
         - name: DATA_PREPROCESSING_X_TEST_PATH
-          value: "{{ .Values.env.DATA_PREPROCESSING_X_TEST_PATH }}"
+          value: {{ .Values.env.DATA_PREPROCESSING_X_TEST_PATH }}
         - name: DATA_PREPROCESSING_Y_TEST_PATH
-          value: "{{ .Values.env.DATA_PREPROCESSING_Y_TEST_PATH }}"
+          value: {{ .Values.env.DATA_PREPROCESSING_Y_TEST_PATH }}
         - name: DATA_PREPROCESSING_TFIDF_VECTORIZER_PATH
-          value: "{{ .Values.env.DATA_PREPROCESSING_TFIDF_VECTORIZER_PATH }}"
+          value: {{ .Values.env.DATA_PREPROCESSING_TFIDF_VECTORIZER_PATH }}
         - name: MODEL_TRAIN_MODEL_TRAIN_PATH
-          value: "{{ .Values.env.MODEL_TRAIN_MODEL_TRAIN_PATH }}"
+          value: {{ .Values.env.MODEL_TRAIN_MODEL_TRAIN_PATH }}
         - name: AWS_BUCKET_NAME
-          value: "{{ .Values.env.AWS_BUCKET_NAME }}"
+          value: {{ .Values.env.AWS_BUCKET_NAME }}
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.secretName }}
+              key: AWS_ACCESS_KEY_ID
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.secretName }}
+              key: AWS_SECRET_ACCESS_KEY
+        - name: DAGSHUB_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.secretName }}
+              key: DAGSHUB_ACCESS_KEY_ID
+        - name: DAGSHUB_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.secretName }}
+              key: DAGSHUB_SECRET_ACCESS_KEY
+        - name: DAGSHUB_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.secretName }}
+              key: DAGSHUB_TOKEN
+        - name: GITHUB_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.secretName }}
+              key: GITHUB_TOKEN
+        - name: GITHUB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.secretName }}
+              key: GITHUB_USERNAME
+        - name: GITHUB_OWNER
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.secretName }}
+              key: GITHUB_OWNER
+        - name: GITHUB_REPO
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.secretName }}
+              key: GITHUB_REPO

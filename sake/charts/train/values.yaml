@@ -1,5 +1,3 @@
 NameSpace: sake
 AppName: train
 DockerImage: belwen/sake-train:2.0
-image:
-  pullPolicy: Always

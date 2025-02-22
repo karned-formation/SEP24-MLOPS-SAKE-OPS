@@ -1,9 +1,7 @@
 NameSpace: sake
 AppName: admin-backend
-DockerImage: belwen/sake-admin-backend:2.0
+DockerImage: abenayoub/sake-admin-backend:2.2
 
-image:
-  pullPolicy: Always
 env:
   AWS_BUCKET_NAME: datascientest-mlops-classif
   ENDPOINT_URL_EXTRACT: http://etl-service/extract
@@ -27,3 +25,4 @@ env:
   DATA_PREPROCESSING_Y_TEST_PATH: data/processed/test/y_test.joblib
   DATA_PREPROCESSING_TFIDF_VECTORIZER_PATH: models/vectorizers/tfidf_vectorizer.joblib
   MODEL_TRAIN_MODEL_TRAIN_PATH: models/train/ovrc.joblib
+secretName: sakesecrets
