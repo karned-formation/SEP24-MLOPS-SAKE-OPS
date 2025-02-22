@@ -21,3 +21,6 @@ spec:
         env:
         - name: URL_BACKEND
           value: "{{ .Values.URL_BACKEND }}"
+        envFrom:
+          - secretRef:
+              name: aws-secrets

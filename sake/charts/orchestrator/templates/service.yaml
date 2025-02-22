@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.AppName }}-service
+  name: predict-{{ .Values.AppName }}-service
   namespace: {{ .Values.NameSpace }}
 spec:
   ports:
