@@ -1,6 +1,6 @@
 NameSpace: sake
-AppName: orchestrator
-DockerImage: abenayoub/orchestrator-no-background:latest
+AppName: predict-orchestrator
+DockerImage: killiankopp/sake-orchestrator:2.1
 
 ENDPOINT_URL_EXTRACT: http://etl-service/extract
 ENDPOINT_URL_TRANSFORM: http://etl-service/transform
