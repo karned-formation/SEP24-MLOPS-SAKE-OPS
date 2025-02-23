@@ -1,6 +1,6 @@
 NameSpace: sake
 AppName: frontend
-DockerImage: killiankopp/sake-frontend:2.1.2
+DockerImage: killiankopp/sake-frontend:2.1.3
 
 HostName: sake.karned.bzh
 
