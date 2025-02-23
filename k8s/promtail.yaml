@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: promtail-config
+  namespace: sake
+data:
+  promtail.yaml: |
+    server:
+      http_listen_port: 3101
+      grpc_listen_port: 9095
+
+    positions:
+      filename: /var/log/positions.yaml
+
+    clients:
+      - url: http://loki:3100/loki/api/v1/push  
+
+    scrape_configs:
+      - job_name: kubernetes-pods
+        kubernetes_sd_configs:
+          - role: pod
+
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_namespace]
+            regex: sake
+            action: keep
+
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod
+
+          - source_labels: [__meta_kubernetes_container_name]
+            target_label: container
+
+        pipeline_stages:
+          - json:
+              expressions:
+                message: log
+                level: level
+                fichier: fichier
+                documents: documents
