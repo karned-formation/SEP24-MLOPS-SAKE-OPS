@@ -27,3 +27,18 @@ spec:
           value: {{ .Values.ENDPOINT_URL_LOAD }}
         - name: ENDPOINT_URL_PREDICT
           value: {{ .Values.ENDPOINT_URL_PREDICT }}
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: aws-secrets
+              key: AWS_ACCESS_KEY_ID
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aws-secrets
+              key: AWS_SECRET_ACCESS_KEY
+        - name: AWS_BUCKET_NAME
+          valueFrom:
+            secretKeyRef:
+              name: aws-secrets
+              key: AWS_BUCKET_NAME
