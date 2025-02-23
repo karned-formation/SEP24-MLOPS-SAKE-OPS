@@ -17,7 +17,7 @@ spec:
       - name: {{ .Values.AppName }}
         image: {{ .Values.DockerImage }}
         ports:
-        - containerPort: 80
+        - containerPort: 3000
         env:
         - name: URL_BACKEND
           value: "{{ .Values.URL_BACKEND }}"
