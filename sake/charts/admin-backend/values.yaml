@@ -1,6 +1,6 @@
 NameSpace: sake
 AppName: admin-backend
-DockerImage: abenayoub/sake-admin-backend:2.2
+DockerImage: belwen/sake-admin-backend:2.3
 
 env:
   AWS_BUCKET_NAME: datascientest-mlops-classif
@@ -12,6 +12,8 @@ env:
   DATA_PREPROCESSING_ENDPOINT_PREPROCESSING: http://preprocessing-service/process
   MODEL_TRAIN_ENDPOINT_TRAIN: http://train-service/train
   MODEL_EVAL_ENDPOINT_EVAL: http://eval-service/eval
+  MODEL_TRAIN_MODEL_TRAIN_PATH: models/train/ovrc.joblib
+  MODEL_EVAL_METRICS_DIR: metrics
 
   DATA_STRUCTURE_RAW_RAW_DATASET_DIR: data/raw_per_classes/
   DATA_INGESTION_OCR_TEXT_DIR: data/ocr_raw_per_classes/
@@ -24,5 +26,7 @@ env:
   DATA_PREPROCESSING_X_TEST_PATH: data/processed/test/X_test.joblib
   DATA_PREPROCESSING_Y_TEST_PATH: data/processed/test/y_test.joblib
   DATA_PREPROCESSING_TFIDF_VECTORIZER_PATH: models/vectorizers/tfidf_vectorizer.joblib
-  MODEL_TRAIN_MODEL_TRAIN_PATH: models/train/ovrc.joblib
+  MLFLOW_EXPERIMENT_ID: BAG_OF_WORDS
+  MLFLOW_MODEL_NAME: BAG_OF_WORDS_MODEL
+
 secretName: sakesecrets

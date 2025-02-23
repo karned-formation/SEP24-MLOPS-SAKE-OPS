@@ -57,6 +57,12 @@ spec:
           value: {{ .Values.env.MODEL_TRAIN_MODEL_TRAIN_PATH }}
         - name: AWS_BUCKET_NAME
           value: {{ .Values.env.AWS_BUCKET_NAME }}
+        - name: MLFLOW_EXPERIMENT_ID
+          value: {{ .Values.env.MLFLOW_EXPERIMENT_ID }}
+        - name: MLFLOW_MODEL_NAME
+          value: {{ .Values.env.MLFLOW_MODEL_NAME }}
+        - name: MODEL_EVAL_METRICS_DIR
+          value: {{ .Values.env.MODEL_EVAL_METRICS_DIR }}
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
