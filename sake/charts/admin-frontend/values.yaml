@@ -1,6 +1,8 @@
 NameSpace: sake
 AppName: admin-frontend
 DockerImage: belwen/sake-admin-frontend:2.0
+
+HostName: admin.sake.karned.bzh
+
 env:
   ADMIN_BACKEND_URL: "http://admin-backend-service"
-  
