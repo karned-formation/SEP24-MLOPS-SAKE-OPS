@@ -42,3 +42,14 @@ spec:
             secretKeyRef:
               name: aws-secrets
               key: AWS_BUCKET_NAME
+        - name: KEYCLOAK_SERVER_URL
+          value: "{{ .Values.KEYCLOAK_SERVER_URL }}"
+        - name: KEYCLOAK_REALM_NAME
+          value: "{{ .Values.KEYCLOAK_REALM_NAME }}"
+        - name: KEYCLOAK_CLIENT_ID
+          value: "{{ .Values.KEYCLOAK_CLIENT_ID }}"
+        - name: KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: keycloak-secrets
+              key: KEYCLOAK_CLIENT_SECRET
