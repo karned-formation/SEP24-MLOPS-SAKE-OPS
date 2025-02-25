@@ -21,6 +21,17 @@ spec:
         env:
         - name: URL_BACKEND
           value: "{{ .Values.URL_BACKEND }}"
+        - name: KEYCLOAK_SERVER_URL
+          value: "{{ .Values.KEYCLOAK_SERVER_URL }}"
+        - name: KEYCLOAK_REALM_NAME
+          value: "{{ .Values.KEYCLOAK_REALM_NAME }}"
+        - name: KEYCLOAK_CLIENT_ID
+          value: "{{ .Values.KEYCLOAK_CLIENT_ID }}"
+        - name: KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: keycloak-secrets
+              key: KEYCLOAK_CLIENT_SECRET
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:

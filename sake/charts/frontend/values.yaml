@@ -1,7 +1,10 @@
 NameSpace: sake
 AppName: frontend
-DockerImage: killiankopp/sake-frontend:2.1.3
+DockerImage: killiankopp/sake-frontend:2.1.5
 
 HostName: sake.karned.bzh
 
 URL_BACKEND: https://api.sake.karned.bzh
+KEYCLOAK_SERVER_URL: https://iam.karned.bzh
+KEYCLOAK_REALM_NAME: Karned
+KEYCLOAK_CLIENT_ID: karned
