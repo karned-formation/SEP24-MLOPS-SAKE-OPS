@@ -1,6 +1,6 @@
 NameSpace: sake
 AppName: admin-backend
-DockerImage: belwen/sake-admin-backend:2.3.2
+DockerImage: belwen/sake-admin-backend:2.3.3
 
 env:
   AWS_BUCKET_NAME: datascientest-mlops-classif
@@ -14,7 +14,8 @@ env:
   MODEL_EVAL_ENDPOINT_EVAL: http://eval-service/eval
   MODEL_TRAIN_MODEL_TRAIN_PATH: models/train/ovrc.joblib
   MODEL_EVAL_METRICS_DIR: metrics
-
+  MODEL_EVAL_MODEL_PATH: models/train/ovrc.joblib
+  
   DATA_STRUCTURE_RAW_RAW_DATASET_DIR: data/raw_per_classes/
   DATA_INGESTION_OCR_TEXT_DIR: data/ocr_raw_per_classes/
   DATA_CLEANING_CLEANED_DATASETS_DIR: data/cleaned_per_classes/

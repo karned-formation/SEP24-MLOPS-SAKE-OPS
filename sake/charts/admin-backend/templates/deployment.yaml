@@ -63,6 +63,8 @@ spec:
           value: {{ .Values.env.MLFLOW_MODEL_NAME }}
         - name: MODEL_EVAL_METRICS_DIR
           value: {{ .Values.env.MODEL_EVAL_METRICS_DIR }}
+        - name: MODEL_EVAL_MODEL_PATH
+          value: {{ .Values.env.MODEL_EVAL_MODEL_PATH }}
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
