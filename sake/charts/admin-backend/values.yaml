@@ -1,6 +1,6 @@
 NameSpace: sake
 AppName: admin-backend
-DockerImage: belwen/sake-admin-backend:2.3.3
+DockerImage: belwen/sake-admin-backend:2.3.4
 
 env:
   AWS_BUCKET_NAME: datascientest-mlops-classif
